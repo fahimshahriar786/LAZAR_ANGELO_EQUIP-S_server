@@ -91,7 +91,36 @@ async function run() {
 
         })
 
-        
+        app.delete('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.post('/product', async (req, res) => {
+            const newProduct = req.body;
+            console.log('adding new user', newProduct);
+            const result = await productCollection.insertOne(newProduct);
+            res.send(result)
+        });
+
+        app.get('/ordered', verifyJWT, async (req, res) => {
+            const decodedEmail = req.decoded.email
+            console.log(decodedEmail);
+
+            const email = (req.query.email);
+            if (email === decodedEmail) {
+                const query = { email: email };
+                const cursor = productCollection.find(query);
+                const products = await cursor.toArray();
+                res.send(products)
+            } else {
+                res.status(403).send({ message: 'Forbidden' })
+            }
+
+        })
+
     }
     finally {
 
