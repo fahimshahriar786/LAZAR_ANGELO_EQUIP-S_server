@@ -57,7 +57,23 @@ async function run() {
             res.send(products)
         })
 
-       
+        app.get('/suppliers', async (req, res) => {
+
+            const query = {};
+            const cursor = supplierInfoCollection.find(query);
+            const suppliers = await cursor.toArray();
+            res.send(suppliers)
+        })
+
+        app.get('/product/:id', async (req, res) => {
+            // console.log(req.params);
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const product = await productCollection.findOne(query)
+            res.send(product)
+        })
+
+        
 
     }
     finally {
